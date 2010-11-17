@@ -269,12 +269,22 @@ $.widget( "ui.accordion", {
 				})
 				.css( "overflow", "auto" );
 		} else if ( options.autoHeight ) {
-			maxHeight = 0;
-			this.headers.next()
-				.each(function() {
-					maxHeight = Math.max( maxHeight, $( this ).height( "" ).height() );
-				})
-				.height( maxHeight );
+			if ( !this.element.is(":hidden") ) {
+				maxHeight = 0;
+				this.headers.next().each(function() {
+					maxHeight = Math.max(maxHeight, $(this).height());
+				}).height(maxHeight);
+			} else {
+				// resize later when the element won't be hidden
+				var resizeHandler = function() {
+					if ( !self.element.is(":hidden") ) {
+						self.resize();
+					} else {
+						setTimeout(resizeHandler,1000);
+					}
+				};
+				setTimeout(resizeHandler,1000);
+			}
 		}
 
 		return this;
